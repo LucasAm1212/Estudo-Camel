@@ -12,33 +12,18 @@ public class FileRoute extends RouteBuilder {
     //caminho pasta
     private String path = "C:\\Users\\lucas\\Desktop\\API\\Arquivo\\";
 
+    //aceitar apenas um tipo de arquivo = input?includeExt=txt,png
     @Override
     public void configure() throws Exception {
-        //pegar arquivos da pasta
-
-        //deletar pasta .camel = input?delete=true
-        //mover, criar pasta e cria copia do arquivo = input?move=${date:now:yyyyMMdd}/${file:name}
-        //para que arquivos repetidos nao sejam processados = input?noop=true
-        //criar mesma hierarquia de pastas do input para o output = input?recursive=true
-        //para ignorar extensao no processamento = input?excludeExt=png,txt
-        //delay de 10 segundos para comecar varredura = input?timeUnit=SECONDS&initialDelay=10
-        //delay entre varredura e limitar quantidade de varreduras = input?delay=10000&repeatCount=3
-        //limitar tamanho do arquivo aceito = input?filterFile=${file:size} < 423
-        from("file://" + path + "input?recursive=true&delete=true")
-                //Imprimir path do arquivo
-                //.log("Arquivo: ${header.CamelFileName} - Path: ${header.CamelFilePath}")
-                //Imprimir nome do arquivo
-                .log("${file:name}")
-                //Imprimir Processor
-                //.process(new FileProcessor())
-                //Imprimir FileComponent
-                //.bean("fileComponent")
-                //move arquivos para a pasta output
-                //flatten ignora todas subpastas do input e agrupa tudo em uma no output
-                .to("file://" + path + "output?flatten=true");
+        from("file://" + path + "input")
+                //condicao
+                .choice()
+                    .when(simple("${header.CamelFileLenght} < 422"))
+                        .to("bean:fileComponent")
+                    .otherwise()
+                        .process(new FileProcessor());
     }
 }
-
 @Component
 //Imprimir FileComponent
 class fileComponent {
