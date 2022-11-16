@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-file-watch-starter</artifactId>
+            <artifactId>camel-timer-starter</artifactId>
             <version>3.19.0</version>
         </dependency>
         <dependency>
